@@ -9,12 +9,12 @@ $("#copy").click(function () {
     $('#wei').select();
     if (document.execCommand('copy')) {
         document.execCommand('copy');
-        alert(1,'复制成功')
+        alertTip(1,'复制成功')
     }
 });
 
 // 下载文件
-$("#all").prop("disabled", true);
+// $("#all").prop("disabled", true);
 function download(strHTML,num){
     var title = '';
     var elHtml = strHTML;
@@ -24,10 +24,10 @@ function download(strHTML,num){
         title= txtname[cur];
         cur++;
         $('.done').text(cur);
-        if (cur == $('.totle').text()) {
-            $("#all").prop("disabled", false);
-        }
-        $('#one').append('<a download="'+title+'.txt" href="'+href+'"><span class="buttonA">'+title+'.txt</span></a>');
+        // if (cur == $('.totle').text()) {
+        //     $("#all").prop("disabled", false);
+        // }
+        $('#one').append('<a download="'+title+'.txt" href="'+href+'"><span class="buttonA">'+title+'.txt</span></a>　　　');
     }else{
         if($('#title').val().length > 0 ){
             title = $('#title').val();
@@ -44,15 +44,15 @@ $("#download").click(function () {
     download($('#wei').val());
 });
 // 弹窗
-function alert(num,txt) {
-    $('.alert span').text(txt);
+function alertTip(num,txt) {
+    $('.alertTip span').text(txt);
     if(num = 1){
-        $('.alert-success').fadeIn();
+        $('.alertTip-success').fadeIn();
     }else {
-        $('.alert-warning').fadeIn();
+        $('.alertTip-warning').fadeIn();
     }
     setTimeout(function () {
-        $('.alert').fadeOut();
+        $('.alertTip').fadeOut();
     },2000)
 }
 function getInput(input){
@@ -78,7 +78,7 @@ function baidu_youdao(content,num){
     var salt = (new Date).getTime();
     var query = content;
     if(query.length >1000){
-        alert(2,'超过1000字，无法转译');
+        alertTip(2,'超过1000字，无法转译');
         return
     }
     var from = 'zh';
@@ -134,9 +134,9 @@ function baidu_youdao(content,num){
                         download()
                     }else{
                         if(data.errorCode > 0){
-                            alert(2,'转译失败，请打开控制台查看');
+                            alertTip(2,'转译失败，请打开控制台查看');
                         }else{
-                            alert(1,'转译成功');
+                            alertTip(1,'转译成功');
                             $('#wei').html(data.translation[0]);
                         }
                     }
@@ -184,10 +184,9 @@ function youdao_baidu(content,num){
             var appid = '20190612000306950';
             var key = 'gFouyIVW0ciO8Zw9hvIE';
             var salt = (new Date).getTime();
-            console.log(data);
             var query = data.translation[0];
             if(query.length >2000){
-                alert(2,'超过1000字，无法转译');
+                alertTip(2,'超过1000字，无法转译');
                 return
             }
             var from = 'en';
@@ -215,7 +214,7 @@ function youdao_baidu(content,num){
                     if(num == 1){
                         download(trans_result,num);
                     }else{
-                        alert(1,'转译成功');
+                        alertTip(1,'转译成功');
                         $('#wei').html(trans_result);
                     }
 
@@ -242,6 +241,13 @@ $('#pi').click(function () {
     if (window.FileReader) {
         var files = document.getElementById("file").files;
         $('.totle').text(files.length);
+
+        for (let i = 0; i < files.length; i++) {
+            if(files[i].size > 1850){
+                alert(files[i].name+'超过1000字');
+                return
+            }
+        }
         for (let i = 0; i < files.length; i++) {
             var filename = files[i].name.split(".")[0];
             txtname.push(filename);
