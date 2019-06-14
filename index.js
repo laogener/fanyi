@@ -12,29 +12,36 @@ $("#copy").click(function () {
         alert(1,'复制成功')
     }
 });
+
+// 下载文件
+$("#all").prop("disabled", true);
+function download(strHTML,num){
+    var title = '';
+    var elHtml = strHTML;
+    var mimeType =  'text/plain';
+    var href = 'data:' + mimeType  +  ';charset=utf-8,' + encodeURIComponent(elHtml);
+    if(num == 1){
+        title= txtname[cur];
+        cur++;
+        $('.done').text(cur);
+        if (cur == $('.totle').text()) {
+            $("#all").prop("disabled", false);
+        }
+        $('#one').append('<a download="'+title+'.txt" href="'+href+'"><span class="buttonA">'+title+'.txt</span></a>');
+    }else{
+        if($('#title').val().length > 0 ){
+            title = $('#title').val();
+        }else{
+            title = new Date().getTime();
+        }
+        $('#download').attr('download',title+'.txt');
+        $('#download').attr('href', href);
+    }
+}
 // 下载转译结果
 $("#download").click(function () {
-    var title = '';
-    if($('#title').val().length > 0 ){
-        title = $('#title').val();
-    }else{
-        title = new Date().getTime();
-    }
-    $('#download').attr('download',title+'.txt');
-    var isIE = (navigator.userAgent.indexOf('MSIE') >= 0);
-    if (isIE) {
-        var strHTML = $("#wei").val();
-        var winSave = window.open();
-        winSave.document.open("text","utf-8");
-        winSave.document.write(strHTML);
-        winSave.document.execCommand("SaveAs",true,title+".txt");
-        winSave.close();
-    } else {
-        var elHtml = $("#wei").val();
-        var mimeType =  'text/plain';
-        $('#download').attr('href', 'data:' + mimeType  +  ';charset=utf-8,' + encodeURIComponent(elHtml));
-        // document.getElementById('download').click();
-    }
+
+    download($('#wei').val());
 });
 // 弹窗
 function alert(num,txt) {
@@ -65,11 +72,15 @@ function getInput(input){
 
 }
 // 百度-英文-有道-中文
-function baidu_youdao(){
+function baidu_youdao(content,num){
     var appid = '20190612000306950';
     var key = 'gFouyIVW0ciO8Zw9hvIE';
     var salt = (new Date).getTime();
-    var query = $('#yuan').val();
+    var query = content;
+    if(query.length >1000){
+        alert(2,'超过1000字，无法转译');
+        return
+    }
     var from = 'zh';
     var to = 'en';
     var str1 = appid + query + salt +key;
@@ -84,6 +95,7 @@ function baidu_youdao(){
             salt: salt,
             from: from,
             to: to,
+            num: num,
             sign: sign
         },
         success: function (data) {
@@ -114,15 +126,21 @@ function baidu_youdao(){
                     to: to,
                     curtime: curtime,
                     sign: sign,
+                    num: num,
                     signType: "v3"
                 },
-                success: function (data) {
-                    if(data.errorCode > 0){
-                        alert(0,'转译失败，请打开控制台查看');
+                success: function (data,num) {
+                    if(num == 1){
+                        download()
                     }else{
-                        alert(1,'转译成功');
-                        $('#wei').html(data.translation[0]);
+                        if(data.errorCode > 0){
+                            alert(2,'转译失败，请打开控制台查看');
+                        }else{
+                            alert(1,'转译成功');
+                            $('#wei').html(data.translation[0]);
+                        }
                     }
+
 
                 }
             });
@@ -130,13 +148,13 @@ function baidu_youdao(){
     });
 }
 // 有道-英文-百度-中文
-function youdao_baidu(){
+function youdao_baidu(content,num){
     // 有道
     var appKey = '53e4d80b4b05941e';
     var key = 'BdlRMuHxlFqD5eZuDJGU8VwIVJhmpG6F';//注意：暴露appSecret，有被盗用造成损失的风险
     var salt = new Date().getTime();
     var curtime=Math.round(new Date().getTime()/1000);
-    var duan = $('#yuan').val().split('\n');
+    var duan = content.split('\n');
     var query = '';// 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
     for(var i=0;i<duan.length;i++){
         if(duan[i].length > 0){
@@ -159,6 +177,7 @@ function youdao_baidu(){
             to: to,
             curtime: curtime,
             sign: sign,
+            num: num,
             signType: "v3"
         },
         success: function (data) {
@@ -167,6 +186,10 @@ function youdao_baidu(){
             var salt = (new Date).getTime();
             console.log(data);
             var query = data.translation[0];
+            if(query.length >2000){
+                alert(2,'超过1000字，无法转译');
+                return
+            }
             var from = 'en';
             var to = 'zh';
             var str1 = appid + query + salt +key;
@@ -181,6 +204,7 @@ function youdao_baidu(){
                     salt: salt,
                     from: from,
                     to: to,
+                    num: num,
                     sign: sign
                 },
                 success: function (data) {
@@ -188,18 +212,50 @@ function youdao_baidu(){
                     for(var i=0;i<data.trans_result.length;i++){
                         trans_result += data.trans_result[i].dst +'\n\n';
                     }
-                    alert(1,'转译成功');
-                    $('#wei').html(trans_result);
+                    if(num == 1){
+                        download(trans_result,num);
+                    }else{
+                        alert(1,'转译成功');
+                        $('#wei').html(trans_result);
+                    }
+
                 }
             });
 
         }
     });
 }
+// 单篇翻译
 $('#yi').click(function () {
+    var content = $('#yuan').val();
     if($('.txt').attr('way') == 1){
-        youdao_baidu();
+        youdao_baidu(content);
     }else{
-        baidu_youdao()
+        baidu_youdao(content)
     }
+});
+// 批量翻译
+var txtname = [],cur = 0;
+$('#pi').click(function () {
+    txtname = [];
+    cur = 0;
+    if (window.FileReader) {
+        var files = document.getElementById("file").files;
+        $('.totle').text(files.length);
+        for (let i = 0; i < files.length; i++) {
+            var filename = files[i].name.split(".")[0];
+            txtname.push(filename);
+            var reader = new FileReader();
+            reader.onload = function () {
+                youdao_baidu(this.result,1);
+            }
+            reader.readAsText(files[i],'UTF-8');
+        }
+    }else{
+
+    }
+});
+// 一键下载
+$('#all').click(function () {
+    $('.buttonA').click();
 });

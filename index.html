@@ -25,12 +25,33 @@
         .row{
             margin-bottom: 1%;
         }
+        .totle{
+            font-weight: bold;
+            color: red;
+        }
+        .done{
+            font-weight: bold;
+            color: blue;
+        }
     </style>
 </head>
 <body>
 <div class="container ">
     <h1>老根儿伪原创</h1>
     <div class="row">
+        <div class="col-md-12"><h3>txt文件批量转译（utf-8）：</h3></div>
+        <div class="col-md-12">共 <span class="totle">0</span>个文件，已转译 <span class="done">0</span>个文件</div>
+        <div class="col-md-12">
+            <div class="btn-group">
+                <input type="file"  class="form-control"  id="file" multiple/>
+                <button type="button" class="btn btn-success" id="pi">批量转译</button>
+                <button id="all" class="btn btn-success">全部下载</button>
+            </div>
+            <div id="one"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"><h3>文本转译：</h3></div>
         <div class="col-md-12 col-md-offset-6">
             <div class="btn-group" role="group" aria-label="...">
                 <input type="text" class="form-control" placeholder="请输入文章标题" id="title">
@@ -64,7 +85,9 @@
     <div class="alert alert-success col-md-2" role="alert"><i class="glyphicon glyphicon-ok"></i>  <span></span></div>
     <div class="alert alert-warning col-md-2" role="alert"><i class="glyphicon glyphicon-remove"></i>  <span></span> </div>
 </div>
+<div class="read">
 
+</div>
 <script src="./index.js"></script>
 </body>
 </html>
