@@ -104,7 +104,6 @@ function baidu_youdao(content,num){
             var key = 'BdlRMuHxlFqD5eZuDJGU8VwIVJhmpG6F';//注意：暴露appSecret，有被盗用造成损失的风险
             var salt = new Date().getTime();
             var curtime=Math.round(new Date().getTime()/1000);
-
             var trans_result='';
             for(var i=0;i<data.trans_result.length;i++){
                 trans_result += data.trans_result[i].dst +'\n\n';
@@ -252,10 +251,16 @@ $('#pi').click(function () {
             var filename = files[i].name.split(".")[0];
             txtname.push(filename);
             var reader = new FileReader();
+            reader.readAsText(files[i],'UTF-8');
             reader.onload = function () {
+                // if($('.txt').attr('way') == 1){
+                //     youdao_baidu(this.result,1);
+                // }else{
+                //     baidu_youdao(this.result,1)
+                // }
                 youdao_baidu(this.result,1);
             }
-            reader.readAsText(files[i],'UTF-8');
+
         }
     }else{
 
