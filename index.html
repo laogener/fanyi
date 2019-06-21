@@ -42,11 +42,12 @@
 <div class="container">
     <h1>老根儿伪原创</h1>
     <div class="row"><div class="col-md-12"><h3>txt文件批量转译（utf-8）：</h3></div></div>
+    <div class="row"><div class="col-md-12">直接选择文本所在文件夹便可自动翻译下载</div></div>
     <div class="row"><div class="col-md-12">共 <span class="totle">0</span>个文件，已转译 <span class="done">0</span>个文件</div></div>
     <div class="row">
         <div class="col-md-12">
             <div class="btn-group">
-                <input type="file"  class="form-control"  id="file" multiple/>
+                <input type="file"  class="form-control"  id="file" webkitdirectory/>
                 <!--<div class="btn-group" role="group">-->
                     <!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
                         <!--<span class="txt" way="0">百度-有道</span>-->
@@ -57,11 +58,10 @@
                         <!--<li><a href="#" way="1">有道-百度</a></li>-->
                     <!--</ul>-->
                 <!--</div>-->
-                <button type="button" class="btn btn-primary" id="pi">批量转译</button>
-                <button id="all" class="btn btn-success">全部下载</button>
+                <!--<button type="button" class="btn btn-primary" id="pi">批量转译</button>-->
+                <!--<button id="all" class="btn btn-success">全部下载</button>-->
                 <a href="javascript:location.reload();"  class="btn btn-info">清空</a>
             </div>
-
         </div>
     </div>
     <div class="row"><div  class="col-md-12" id="one"></div></div>

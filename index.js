@@ -15,27 +15,27 @@ $("#copy").click(function () {
 
 // 下载文件
 // $("#all").prop("disabled", true);
-function download(strHTML,num){
+function download(strHTML,num,name){
     var title = '';
     var elHtml = strHTML;
     var mimeType =  'text/plain';
     var href = 'data:' + mimeType  +  ';charset=utf-8,' + encodeURIComponent(elHtml);
     if(num == 1){
-        title= txtname[cur];
         cur++;
         $('.done').text(cur);
-        // if (cur == $('.totle').text()) {
-        //     $("#all").prop("disabled", false);
-        // }
-        $('#one').append('<a download="'+title+'.txt" href="'+href+'"><span class="buttonA">'+title+'.txt</span></a>　　　');
+
+        $('#one').append('<a download="'+name+'.txt" href="'+href+'"><span class="buttonA">'+name+'.txt</span></a>　　　');
     }else{
         if($('#title').val().length > 0 ){
             title = $('#title').val();
         }else{
             title = new Date().getTime();
         }
-        $('#download').attr('download',title+'.txt');
+        $('#download').attr('download',name+'.txt');
         $('#download').attr('href', href);
+    }
+    if(cur == $('.totle').text()){
+        $('.buttonA').click();
     }
 }
 // 下载转译结果
@@ -45,14 +45,14 @@ $("#download").click(function () {
 });
 // 弹窗
 function alertTip(num,txt) {
-    $('.alertTip span').text(txt);
-    if(num = 1){
-        $('.alertTip-success').fadeIn();
+    $('.alert span').text(txt);
+    if(num == 1){
+        $('.alert-success').fadeIn();
     }else {
-        $('.alertTip-warning').fadeIn();
+        $('.alert-warning').fadeIn();
     }
     setTimeout(function () {
-        $('.alertTip').fadeOut();
+        $('.alert').fadeOut();
     },2000)
 }
 function getInput(input){
@@ -72,13 +72,13 @@ function getInput(input){
 
 }
 // 百度-英文-有道-中文
-function baidu_youdao(content,num){
+function baidu_youdao(content,num,name){
     var appid = '20190612000306950';
     var key = 'gFouyIVW0ciO8Zw9hvIE';
     var salt = (new Date).getTime();
     var query = content;
-    if(query.length >1000){
-        alertTip(2,'超过1000字，无法转译');
+    if(query.length >800){
+        alertTip(2,'超过800字，无法转译');
         return
     }
     var from = 'zh';
@@ -96,6 +96,7 @@ function baidu_youdao(content,num){
             from: from,
             to: to,
             num: num,
+            name: name,
             sign: sign
         },
         success: function (data) {
@@ -126,11 +127,12 @@ function baidu_youdao(content,num){
                     curtime: curtime,
                     sign: sign,
                     num: num,
+                    name: name,
                     signType: "v3"
                 },
                 success: function (data,num) {
                     if(num == 1){
-                        download()
+                        download(data.translation[0],num,name)
                     }else{
                         if(data.errorCode > 0){
                             alertTip(2,'转译失败，请打开控制台查看');
@@ -147,7 +149,7 @@ function baidu_youdao(content,num){
     });
 }
 // 有道-英文-百度-中文
-function youdao_baidu(content,num){
+function youdao_baidu(content,num,name){
     // 有道
     var appKey = '53e4d80b4b05941e';
     var key = 'BdlRMuHxlFqD5eZuDJGU8VwIVJhmpG6F';//注意：暴露appSecret，有被盗用造成损失的风险
@@ -177,6 +179,7 @@ function youdao_baidu(content,num){
             curtime: curtime,
             sign: sign,
             num: num,
+            name: name,
             signType: "v3"
         },
         success: function (data) {
@@ -184,8 +187,8 @@ function youdao_baidu(content,num){
             var key = 'gFouyIVW0ciO8Zw9hvIE';
             var salt = (new Date).getTime();
             var query = data.translation[0];
-            if(query.length >2000){
-                alertTip(2,'超过1000字，无法转译');
+            if(query.length >1800){
+                alertTip(2,'超过800字，无法转译');
                 return
             }
             var from = 'en';
@@ -203,6 +206,7 @@ function youdao_baidu(content,num){
                     from: from,
                     to: to,
                     num: num,
+                    name: name,
                     sign: sign
                 },
                 success: function (data) {
@@ -211,7 +215,7 @@ function youdao_baidu(content,num){
                         trans_result += data.trans_result[i].dst +'\n\n';
                     }
                     if(num == 1){
-                        download(trans_result,num);
+                        download(trans_result,num,name);
                     }else{
                         alertTip(1,'转译成功');
                         $('#wei').html(trans_result);
@@ -243,7 +247,7 @@ $('#pi').click(function () {
 
         for (let i = 0; i < files.length; i++) {
             if(files[i].size > 1850){
-                alert(files[i].name+'超过1000字');
+                alert(files[i].name+'超过800字');
                 return
             }
         }
@@ -254,11 +258,11 @@ $('#pi').click(function () {
             reader.readAsText(files[i],'UTF-8');
             reader.onload = function () {
                 // if($('.txt').attr('way') == 1){
-                //     youdao_baidu(this.result,1);
+                //     youdao_baidu(this.result,1,files[i].name);
                 // }else{
-                //     baidu_youdao(this.result,1)
+                //     baidu_youdao(this.result,1,files[i].name)
                 // }
-                youdao_baidu(this.result,1);
+                youdao_baidu(this.result,1,files[i].name);
             }
 
         }
@@ -270,3 +274,36 @@ $('#pi').click(function () {
 $('#all').click(function () {
     $('.buttonA').click();
 });
+
+document.getElementById("file").onchange = function () {
+    txtname = [];
+    cur = 0;
+    if (window.FileReader) {
+        var files = document.getElementById("file").files;
+        $('.totle').text(files.length);
+
+        for (let i = 0; i < files.length; i++) {
+            if(files[i].size > 1850){
+                alert(files[i].name+'超过800字');
+                return
+            }
+        }
+        for (let i = 0; i < files.length; i++) {
+            var filename = files[i].name.split(".")[0];
+            txtname.push(filename);
+            var reader = new FileReader();
+            reader.readAsText(files[i],'UTF-8');
+            reader.onload = function () {
+                // if($('.txt').attr('way') == 1){
+                //     youdao_baidu(this.result,1,files[i].name);
+                // }else{
+                //     baidu_youdao(this.result,1,files[i].name)
+                // }
+                youdao_baidu(this.result,1,files[i].name);
+            }
+
+        }
+    }else{
+
+    }
+}
