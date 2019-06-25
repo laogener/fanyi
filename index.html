@@ -36,6 +36,9 @@
             font-weight: bold;
             color: blue;
         }
+        .container{
+            margin-bottom: 80px;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +98,16 @@
         <div class="col-md-6">
             <p>伪原创：</p>
             <textarea name="" class="form-control"  id="wei"  rows="20"></textarea>
+        </div>
+    </div>
+    <div class="row"><div class="col-md-12"><h3>站群批量生成网站地图</h3></div></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <input type="file"  class="form-control"  id="nets" multiple/>
+                <button type="button" class="btn btn-success" id="map">复制sitemap地址</button>
+                <textarea name="" class="form-control"  id="mapUrl" rows="5"></textarea>
+            </div>
         </div>
     </div>
     <div class="alert alert-success col-md-2" role="alert"><i class="glyphicon glyphicon-ok"></i>  <span></span></div>

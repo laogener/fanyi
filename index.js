@@ -307,3 +307,37 @@ document.getElementById("file").onchange = function () {
 
     }
 }
+// 批量生成sitemap地图
+var nets ='',mapUrl='';
+document.getElementById("nets").onchange = function () {
+    nets ='';
+    var files = document.getElementById("nets").files;
+    var reader = new FileReader();
+    reader.readAsText(files[0],'UTF-8');
+    reader.onload = function () {
+        mapUrl = ''
+        nets = this.result.split(',');
+        for(var i=0;i<nets.length;i++){
+            mapUrl+=$.trim(nets[i])+'/sitemap.xml\r' ;
+            window.open($.trim(nets[i])+'/plus/task/generate_sitemap.php');
+        }
+        console.log(mapUrl);
+        $('#mapUrl').html(mapUrl);
+    }
+}
+$('#map').click(function () {
+    $('#mapUrl').select();
+    if (document.execCommand('copy')) {
+        document.execCommand('copy');
+        alertTip(1,'复制成功')
+    }
+})
+
+// document.oncontextmenu = function () { return false; };
+// document.onkeydown = function () {
+//     if (window.event && window.event.keyCode == 123) {
+//         event.keyCode = 0;
+//         event.returnValue = false;
+//         return false;
+//     }
+// };
